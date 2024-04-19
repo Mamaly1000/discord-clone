@@ -10,6 +10,7 @@ const font = Open_Sans({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Discord clone",
   description: "a chat app like discord",
+  icons: "./favicon.ico",
 };
 
 export default function RootLayout({
@@ -20,12 +21,12 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={cn(font.className, "bg-black")}>
+        <body className={cn(font.className, "bg-white dark:bg-[#313338]")}>
           <ThemeProvider
+            storageKey="discord-theme"
             attribute="class"
             defaultTheme="system"
             enableSystem
-            disableTransitionOnChange
           >
             {children}
           </ThemeProvider>
