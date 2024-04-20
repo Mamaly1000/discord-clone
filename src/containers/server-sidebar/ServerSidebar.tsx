@@ -4,7 +4,6 @@ import { ChannelType } from "@prisma/client";
 import { redirect } from "next/navigation";
 import React from "react";
 import ServerHeader from "./ServerHeader";
-import { Server_Members_Profiles_channels } from "@/types";
 
 const ServerSidebar = async ({ serverId }: { serverId: string }) => {
   const profile = await currentProfile();
@@ -24,7 +23,7 @@ const ServerSidebar = async ({ serverId }: { serverId: string }) => {
       },
       members: {
         include: {
-          prfile: true,
+          profile: true,
         },
         orderBy: { role: "asc" },
       },

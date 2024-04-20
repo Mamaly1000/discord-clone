@@ -58,7 +58,7 @@ model Member{
   role MemberRole @default(GUEST)
 
   profileId String
-  prfile Profile @relation(fields: [profileId],references: [id],onDelete:Cascade)
+  profile Profile @relation(fields: [profileId],references: [id],onDelete:Cascade)
 
   serverId String
   server Server @relation(fields: [serverId],references: [id],onDelete:Cascade)

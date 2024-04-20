@@ -1,5 +1,6 @@
 "use client";
 import InviteModal from "@/components/modals/InviteModal";
+import MembersModal from "@/components/modals/MembersModal";
 import ServerModal from "@/components/modals/ServerModal";
 import ServerSettingModal from "@/components/modals/ServerSettingModal";
 import React, { useEffect, useState } from "react";
@@ -17,6 +18,7 @@ const ModalProvider = () => {
       <ServerModal />
       <ServerSettingModal />
       <InviteModal />
+      <MembersModal />
     </>
   );
 };
