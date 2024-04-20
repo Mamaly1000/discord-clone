@@ -1,4 +1,4 @@
-import NavigationSidebar from "@/containers/NavigationSidebar";
+import NavigationSidebar from "@/containers/server-navigation/NavigationSidebar";
 
 export default async function RootLayout({
   children,

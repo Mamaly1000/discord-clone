@@ -9,8 +9,9 @@ import { FC } from "react";
 interface props {
   server: Server;
   index: number;
+  className?: string;
 }
-const NavigationItem: FC<props> = ({ server, index }) => {
+const NavigationItem: FC<props> = ({ server, index, className }) => {
   const params = useParams();
   const router = useRouter();
   const isActive = params?.serverId === server.id;
@@ -21,7 +22,10 @@ const NavigationItem: FC<props> = ({ server, index }) => {
   };
   return (
     <CustomTooltip align="center" label={server.name} side="right">
-      <button className="group relative flex items-center" onClick={onClick}>
+      <button
+        className={cn("group relative flex items-center", className)}
+        onClick={onClick}
+      >
         <div
           className={cn(
             "absolute left-0 bg-primary rounded-r-full transition-all w-[4px]",

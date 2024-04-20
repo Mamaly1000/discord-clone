@@ -27,9 +27,14 @@ const NavigationSidebar = async () => {
     <section className="flex-col gap-4 flex items-center h-full text-primary w-full dark:bg-[#1e1f22] py-4 ">
       <NavigationAction />
       <Separator className="h-[2px] bg-zinc-300 dark:bg-zinc-700 rounded-md w-10 mx-auto" />
-      <ScrollArea className="flex-1 w-full">
+      <ScrollArea className="flex flex-col items-start justify-start w-full gap-5">
         {servers.map((server, i) => (
-          <NavigationItem key={server.id} server={server} index={i} />
+          <NavigationItem
+            className="mb-2"
+            key={server.id}
+            server={server}
+            index={i}
+          />
         ))}
       </ScrollArea>
       <div className="pb-3 mt-auto flex flex-col items-center gap-y-4">

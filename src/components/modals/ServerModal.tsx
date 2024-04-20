@@ -55,6 +55,7 @@ const ServerModal = () => {
         console.log(res.data.message);
         form.reset();
         router.refresh();
+        handleClose();
       });
     } catch (error) {
       console.log(error);
