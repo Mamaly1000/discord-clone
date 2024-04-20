@@ -52,12 +52,14 @@ const ServerSettingModal = () => {
   const isLoading = form.formState.isSubmitting;
   const onSubmit = form.handleSubmit(async (values: formValueType) => {
     try {
-      await axios.patch("/api/servers", values).then((res) => {
-        console.log(res.data.message);
-        form.reset();
-        router.refresh();
-        handleClose();
-      });
+      await axios
+        .patch(`/api/servers/${data.server?.id}`, values)
+        .then((res) => {
+          console.log(res.data.message);
+          form.reset();
+          router.refresh();
+          handleClose();
+        });
     } catch (error) {
       console.log(error);
     }
@@ -136,7 +138,7 @@ const ServerSettingModal = () => {
                 className="capitalize"
                 disabled={isLoading}
               >
-                create
+                save
               </Button>
             </DialogFooter>
           </form>
