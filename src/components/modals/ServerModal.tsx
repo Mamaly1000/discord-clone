@@ -23,7 +23,7 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 
-import FileUploader from "../common/file-uploader";
+import FileUploader from "@/components/common/file-uploader";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-modal-store";
 

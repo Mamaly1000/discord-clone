@@ -6,6 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { useModal } from "@/hooks/use-modal-store";
 import { Server_Members_Profiles_channels } from "@/types";
 import { MemberRole } from "@prisma/client";
 import {
@@ -25,6 +26,8 @@ interface props {
 }
 
 const ServerHeader: FC<props> = ({ server, role }) => {
+  const { onOpen } = useModal();
+
   const isADMIN = role === MemberRole.ADMIN;
   const isMODERATOR = isADMIN || role === MemberRole.MODERATOR;
   const isGUEST = role === MemberRole.GUEST;
@@ -38,12 +41,18 @@ const ServerHeader: FC<props> = ({ server, role }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 text-xs font-medium text-black dark:text-neutral-400 space-y-[2px]  capitalize">
         {isMODERATOR && (
-          <DropdownMenuItem className="text-indigo-600 dark:text-indigo-400 px-3 py-2 text-sm cursor-pointer flex items-center justify-between">
+          <DropdownMenuItem
+            onClick={() => onOpen({ type: "invite-member", data: { server } })}
+            className="text-indigo-600 dark:text-indigo-400 px-3 py-2 text-sm cursor-pointer flex items-center justify-between"
+          >
             Invite people <UserPlus className="h-4 w-4 ml-auto" />
           </DropdownMenuItem>
         )}
         {isADMIN && (
-          <DropdownMenuItem className="px-3 py-2 text-sm cursor-pointer flex items-center justify-between">
+          <DropdownMenuItem
+            onClick={() => onOpen({ type: "update-server", data: { server } })}
+            className="px-3 py-2 text-sm cursor-pointer flex items-center justify-between"
+          >
             server setting <Settings className="h-4 w-4 ml-auto" />
           </DropdownMenuItem>
         )}

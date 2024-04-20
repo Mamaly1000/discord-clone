@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +25,7 @@ import axios from "axios";
 
 import FileUploader from "@/components/common/file-uploader";
 import { useRouter } from "next/navigation";
+import { useModal } from "@/hooks/use-modal-store";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -37,40 +38,42 @@ const formSchema = z.object({
 
 type formValueType = z.infer<typeof formSchema>;
 
-const InitialModal = () => {
-  const [isMounted, setMounted] = useState(false);
+const ServerSettingModal = () => {
+  const { isOpen, type, onClose, data } = useModal();
+  const isModalOpen = isOpen && type === "update-server";
 
   const router = useRouter();
-
   const form = useForm<formValueType>({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: "", imageUrl: "" },
+    defaultValues: data.server
+      ? { name: data.server.name, imageUrl: data.server.imageUrl }
+      : { name: "", imageUrl: "" },
   });
   const isLoading = form.formState.isSubmitting;
   const onSubmit = form.handleSubmit(async (values: formValueType) => {
     try {
-      await axios.post("/api/servers", values).then((res) => {
+      await axios.patch("/api/servers", values).then((res) => {
         console.log(res.data.message);
         form.reset();
         router.refresh();
-        window.location.reload();
+        handleClose();
       });
     } catch (error) {
       console.log(error);
     }
   });
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-  if (!isMounted) {
-    return null;
-  }
+
+  const handleClose = () => {
+    form.reset();
+    onClose();
+  };
+
   return (
-    <Dialog open>
+    <Dialog onOpenChange={handleClose} open={isModalOpen}>
       <DialogContent className="bg-white text-black p-0 overflow-hidden">
         <DialogHeader className="pt-8 px-6">
           <DialogTitle className="text-2xl text-center font-bold capitalize">
-            customize your server
+            update your server
           </DialogTitle>
           <DialogDescription className="text-center text-zinc-500 capitalize">
             give your server a personality with a name and an image. you can
@@ -143,4 +146,4 @@ const InitialModal = () => {
   );
 };
 
-export default InitialModal;
+export default ServerSettingModal;
