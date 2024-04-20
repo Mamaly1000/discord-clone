@@ -21,6 +21,10 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
+
+import FileUploader from "../common/file-uploader";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -35,13 +39,25 @@ type formValueType = z.infer<typeof formSchema>;
 
 const InitialModal = () => {
   const [isMounted, setMounted] = useState(false);
+
+  const router = useRouter();
+
   const form = useForm<formValueType>({
     resolver: zodResolver(formSchema),
     defaultValues: { name: "", imageUrl: "" },
   });
   const isLoading = form.formState.isSubmitting;
   const onSubmit = form.handleSubmit(async (values: formValueType) => {
-    console.log(values);
+    try {
+      await axios.post("/api/servers", values).then((res) => {
+        console.log(res.data.message);
+        form.reset();
+        router.refresh();
+        window.location.reload();
+      });
+    } catch (error) {
+      console.log(error);
+    }
   });
   useEffect(() => {
     setMounted(true);
@@ -65,7 +81,27 @@ const InitialModal = () => {
           <form onSubmit={onSubmit} className="space-y-8">
             <div className="space-y-8 px-6">
               <div className="flex items-center justify-center text-center">
-                TODO : IMAGE UPLOAD
+                <FormField
+                  control={form.control}
+                  name="imageUrl"
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                          server image
+                        </FormLabel>
+                        <FormControl>
+                          <FileUploader
+                            endpoint="serverImage"
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
               </div>
               <FormField
                 control={form.control}
