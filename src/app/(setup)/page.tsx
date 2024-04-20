@@ -1,3 +1,4 @@
+import InitialModal from "@/components/modals/InitialModal";
 import { initialProfile } from "@/lib/initial-profile";
 import { db } from "@/lib/prisma";
 import { redirect } from "next/navigation";
@@ -11,7 +12,7 @@ const SetuptPage = async () => {
   if (server) {
     return redirect(`/servers/${server.id}`);
   }
-  return <div>setup your server</div>;
+  return <InitialModal />;
 };
 
 export default SetuptPage;
