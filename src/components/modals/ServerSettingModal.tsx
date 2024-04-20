@@ -45,7 +45,7 @@ const ServerSettingModal = () => {
   const router = useRouter();
   const form = useForm<formValueType>({
     resolver: zodResolver(formSchema),
-    defaultValues: data.server
+    values: data.server
       ? { name: data.server.name, imageUrl: data.server.imageUrl }
       : { name: "", imageUrl: "" },
   });
