@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/providers/ThemeProvider";
+import ModalProvider from "@/providers/ModalProvider";
 
 const font = Open_Sans({ subsets: ["latin"] });
 
@@ -28,6 +29,7 @@ export default function RootLayout({
             defaultTheme="system"
             enableSystem
           >
+            <ModalProvider />
             {children}
           </ThemeProvider>
         </body>
