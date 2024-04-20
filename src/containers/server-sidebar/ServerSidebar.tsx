@@ -49,7 +49,7 @@ const ServerSidebar = async ({ serverId }: { serverId: string }) => {
 
   return (
     <section className="flex flex-col h-full text-primary w-full dark:bg-[#2b2d31] bg-[#f2f3f5] ">
-      <ServerHeader server={server as any} role={myRole} />
+      <ServerHeader server={server} role={myRole} />
     </section>
   );
 };

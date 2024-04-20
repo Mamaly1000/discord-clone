@@ -65,7 +65,12 @@ const ServerHeader: FC<props> = ({ server, role }) => {
           </DropdownMenuItem>
         )}
         {isMODERATOR && (
-          <DropdownMenuItem className="px-3 py-2 text-sm cursor-pointer flex items-center justify-between">
+          <DropdownMenuItem
+            onClick={() =>
+              onOpen({ type: "manage-channels", data: { server } })
+            }
+            className="px-3 py-2 text-sm cursor-pointer flex items-center justify-between"
+          >
             create channel <PlusCircle className="h-4 w-4 ml-auto" />
           </DropdownMenuItem>
         )}

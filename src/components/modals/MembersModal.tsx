@@ -11,7 +11,7 @@ import { useModal } from "@/hooks/use-modal-store";
 import { Server_Members_Profiles_channels } from "@/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import MemberItem from "../cards/MemberItem";
-import { Member, MemberRole } from "@prisma/client";
+import { MemberRole } from "@prisma/client";
 import qs from "query-string";
 import axios from "axios";
 import { useRouter } from "next/navigation";

@@ -63,8 +63,8 @@ const ServerModal = () => {
   });
 
   const handleClose = () => {
-    form.reset();
     onClose();
+    form.reset();
   };
 
   return (
