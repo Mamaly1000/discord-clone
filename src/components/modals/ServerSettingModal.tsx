@@ -66,8 +66,8 @@ const ServerSettingModal = () => {
   });
 
   const handleClose = () => {
-    form.reset();
     onClose();
+    form.reset();
   };
 
   return (

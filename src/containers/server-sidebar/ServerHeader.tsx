@@ -76,12 +76,18 @@ const ServerHeader: FC<props> = ({ server, role }) => {
         )}
         {isMODERATOR && <DropdownMenuSeparator />}
         {isADMIN && (
-          <DropdownMenuItem className="px-3 py-2 text-sm cursor-pointer flex items-center justify-between text-rose-500 ">
+          <DropdownMenuItem
+            onClick={() => onOpen({ type: "delete-server", data: { server } })}
+            className="px-3 py-2 text-sm cursor-pointer flex items-center justify-between text-rose-500 "
+          >
             delete server <Trash className="h-4 w-4 ml-auto" />
           </DropdownMenuItem>
         )}
         {!isADMIN && (
-          <DropdownMenuItem className="px-3 py-2 text-sm cursor-pointer flex items-center justify-between text-rose-500 ">
+          <DropdownMenuItem
+            onClick={() => onOpen({ type: "leave-server", data: { server } })}
+            className="px-3 py-2 text-sm cursor-pointer flex items-center justify-between text-rose-500 "
+          >
             leave server <LogOut className="h-4 w-4 ml-auto" />
           </DropdownMenuItem>
         )}
