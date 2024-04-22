@@ -11,7 +11,7 @@ interface props {
   server: Server;
   role?: MemberRole;
 }
-const ServerMember: FC<props> = ({ member, server, role }) => {
+const ServerMember: FC<props> = ({ member }) => {
   const router = useRouter();
   const params = useParams();
 
@@ -19,6 +19,9 @@ const ServerMember: FC<props> = ({ member, server, role }) => {
   const isActive = params?.memberId === member.id;
   return (
     <button
+      onClick={() =>
+        router.push(`/servers/${params?.serverId}/conversations/${member.id}`)
+      }
       className={cn(
         "group p-2 rounded-md flex items-center gap-x-2 w-full hover:bg-zinc-700/10 dark:hover:bg-zinc-700/50 transition mb-1",
         isActive && "bg-zinc-700/20 dark:bg-zinc-700"
@@ -37,6 +40,7 @@ const ServerMember: FC<props> = ({ member, server, role }) => {
       >
         {member.profile.name}
       </p>
+      {icon}
     </button>
   );
 };

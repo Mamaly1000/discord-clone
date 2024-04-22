@@ -6,7 +6,7 @@ import { iconMapRaw } from "./icons";
 import { useParams, useRouter } from "next/navigation";
 import CustomTooltip from "./action-tooltip";
 import { Edit, Lock, Trash } from "lucide-react";
-import { useModal } from "@/hooks/use-modal-store";
+import { ModalType, useModal } from "@/hooks/use-modal-store";
 
 interface props {
   channel: Channel;
@@ -23,21 +23,19 @@ const ServerChannel: FC<props> = ({ channel, server, role }) => {
 
   const onClick = () => {
     if (params?.channelId !== channel.id || !!!params?.channelId)
-      router.push(`/servers/${params?.serverid}/channels/${channel.id}`);
+      router.push(`/servers/${params?.serverId}/channels/${channel?.id}`);
   };
-  const onEdit = () => {
+  const onAction = (e: React.MouseEvent, type: ModalType) => {
+    e.stopPropagation();
     onOpen({
-      type: "edit-channel",
+      type,
       data: { channel, server },
     });
-  };
-  const onDelete = () => {
-    onOpen({ type: "delete-channel", data: { channel, server } });
   };
 
   return (
     <button
-      // onClick={onClick}
+      onClick={onClick}
       className={cn(
         "group p-2 rounded-md flex items-center gap-x-2 w-full hover:bg-zinc-700/10 dark:hover:bg-zinc-700/50 transition mb-1",
         params?.channelId === channel.id && "bg-zinc-700/20 dark:bg-zinc-700"
@@ -58,13 +56,13 @@ const ServerChannel: FC<props> = ({ channel, server, role }) => {
           <div className="ml-auto flex items-center gap-x-2">
             <CustomTooltip label="Edit" align="center" side="top">
               <Edit
-                onClick={onEdit}
+                onClick={(e) => onAction(e, "edit-channel")}
                 className="w-4 h-4 hidden group-hover:block cursor-pointer text-zinc-500 hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-zinc-300 transition"
               />
             </CustomTooltip>
             <CustomTooltip label="Delete" align="center" side="top">
               <Trash
-                onClick={onDelete}
+                onClick={(e) => onAction(e, "delete-channel")}
                 className="w-4 h-4 hidden group-hover:block cursor-pointer hover:text-zinc-600 dark:text-rose-500 text-rose-500 dark:hover:text-zinc-300 transition"
               />
             </CustomTooltip>
