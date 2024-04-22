@@ -20,7 +20,7 @@ const ServerMember: FC<props> = ({ member }) => {
   return (
     <button
       onClick={() =>
-        router.push(`/servers/${params?.serverId}/conversations/${member.id}`)
+        router.push(`/servers/${params?.serverId}/conversation/${member.id}`)
       }
       className={cn(
         "group p-2 rounded-md flex items-center gap-x-2 w-full hover:bg-zinc-700/10 dark:hover:bg-zinc-700/50 transition mb-1",
