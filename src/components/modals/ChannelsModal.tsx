@@ -26,7 +26,7 @@ import {
 
 import { useModal } from "@/hooks/use-modal-store";
 import { useParams, useRouter } from "next/navigation";
-import { z } from "zod";
+import { date, z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
@@ -34,6 +34,7 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { ChannelType } from "@prisma/client";
 import qs from "query-string";
+import { channel } from "diagnostics_channel";
 
 const formSchema = z.object({
   name: z
@@ -53,27 +54,43 @@ const ChannelsModal = () => {
   const router = useRouter();
   const params = useParams();
 
-  const { type, isOpen, onClose } = useModal();
+  const { type, isOpen, onClose, data } = useModal();
+  const { channel } = data;
 
-  const isModalOpen = isOpen && type === "manage-channels";
-
+  const isModalOpen =
+    isOpen && (type === "manage-channels" || type === "edit-channel");
+  const isCreating = isOpen && type === "manage-channels";
+  const isEditing = isOpen && type === "edit-channel";
   const form = useForm<formValueType>({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: "", type: ChannelType.TEXT },
+    values: {
+      name: !!channel ? channel?.name || "" : "",
+      type: !!channel ? channel?.type || ChannelType.TEXT : ChannelType.TEXT,
+    },
   });
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = form.handleSubmit(async (values: formValueType) => {
     try {
       const url = qs.stringifyUrl({
-        url: `/api/channels`,
+        url: isCreating ? `/api/channels` : `/api/channels/${channel?.id}`,
         query: { serverId: params?.serverId },
       });
-      await axios.post(url, values).then((res) => {
-        console.log(res.data.message);
-        router.refresh();
-        handleClose();
-      });
+      let req;
+      if (isCreating) {
+        req = await axios.post(url, values).then((res) => {
+          console.log(res.data.message);
+          router.refresh();
+          handleClose();
+        });
+      }
+      if (isEditing) {
+        req = await axios.patch(url, values).then((res) => {
+          console.log(res.data.message);
+          router.refresh();
+          handleClose();
+        });
+      }
     } catch (error) {
       console.log(error);
     }
@@ -88,7 +105,8 @@ const ChannelsModal = () => {
       <DialogContent className="bg-white text-black overflow-hidden">
         <DialogHeader className="pt-8 px-6">
           <DialogTitle className="text-2xl text-center font-bold capitalize">
-            create channel
+            {isCreating && "create channel"}
+            {isEditing && "Edit channel"}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -160,7 +178,7 @@ const ChannelsModal = () => {
                 className="capitalize"
                 disabled={isLoading}
               >
-                create
+                {isCreating ? "create" : "save"}
               </Button>
             </DialogFooter>
           </form>

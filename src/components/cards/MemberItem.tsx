@@ -24,6 +24,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuSub,
 } from "@/components/ui/dropdown-menu";
+import { roleIcon } from "../common/icons";
 
 interface props {
   member: Member & { profile: Profile };
@@ -41,12 +42,6 @@ const MemberItem: FC<props> = ({
   onRoleChange,
   onKick,
 }) => {
-  const roleIcon = {
-    GUEST: null,
-    MODERATOR: <ShieldCheck className="h-4 w-4 ml-2 text-indigo-500" />,
-    ADMIN: <ShieldAlert className="h-4 w-4 text-rose-500" />,
-  };
-
   return (
     <div className="flex items-center gap-x-2 mb-6">
       <UserAvatar src={member?.profile?.imageUrl} />

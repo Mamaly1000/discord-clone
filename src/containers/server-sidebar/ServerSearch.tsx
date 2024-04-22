@@ -77,7 +77,10 @@ const ServerSearch: FC<props> = ({ data = [] }) => {
               !!data?.length && (
                 <CommandGroup key={label} heading={label}>
                   {data?.map(({ icon, id, name }) => (
-                    <CommandItem onSelect={() => onClick({ id, type })} key={id}>
+                    <CommandItem
+                      onSelect={() => onClick({ id, type })}
+                      key={id}
+                    >
                       {icon} <span>{name}</span>
                     </CommandItem>
                   ))}
@@ -87,7 +90,6 @@ const ServerSearch: FC<props> = ({ data = [] }) => {
           <CommandEmpty>no results found</CommandEmpty>
         </CommandList>
       </CommandDialog>
-      ;
     </>
   );
 };
