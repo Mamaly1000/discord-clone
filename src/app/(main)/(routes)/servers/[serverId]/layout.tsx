@@ -25,11 +25,11 @@ export default async function RootLayout({
   }
 
   return (
-    <section className="h-full">
+    <section className="h-full min-w-full">
       <section className="hidden md:flex h-full w-60 z-60 flex-col fixed inset-y-0">
         <ServerSidebar serverId={params.serverId} />
       </section>
-      <main className="md:pl-60 h-full">{children}</main>
+      <main className="md:pl-60 h-full ">{children}</main>
     </section>
   );
 }

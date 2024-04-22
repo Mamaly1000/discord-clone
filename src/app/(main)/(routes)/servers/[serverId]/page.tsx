@@ -2,7 +2,6 @@ import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/prisma";
 import { redirectToSignIn } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
-import React from "react";
 
 const ServerPage = async ({ params }: { params: { serverId: string } }) => {
   const profile = await currentProfile();
