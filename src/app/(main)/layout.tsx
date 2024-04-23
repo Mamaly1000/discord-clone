@@ -10,7 +10,7 @@ export default async function RootLayout({
       <section className="hidden md:flex h-full w-[72px] z-30 flex-col fixed inset-y-0">
         <NavigationSidebar />
       </section>
-      <main className="md:pl-[72px] h-full w-full">{children}</main>
+      <main className="md:pl-[72px] h-full min-h-screen  w-full">{children}</main>
     </section>
   );
 }
