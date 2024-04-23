@@ -5,6 +5,7 @@ import DeleteServerModal from "@/components/modals/DeleteServerModal";
 import InviteModal from "@/components/modals/InviteModal";
 import LeaveServerModal from "@/components/modals/LeaveServerModal";
 import MembersModal from "@/components/modals/MembersModal";
+import MessageFileModal from "@/components/modals/MessageFileModal";
 import ServerModal from "@/components/modals/ServerModal";
 import ServerSettingModal from "@/components/modals/ServerSettingModal";
 import React, { useEffect, useState } from "react";
@@ -20,13 +21,14 @@ const ModalProvider = () => {
   return (
     <>
       <ServerModal />
-      <ServerSettingModal />
       <InviteModal />
       <MembersModal />
       <ChannelsModal />
+      <MessageFileModal />
       <LeaveServerModal />
-      <DeleteChannelModal />
       <DeleteServerModal />
+      <DeleteChannelModal />
+      <ServerSettingModal />
     </>
   );
 };
