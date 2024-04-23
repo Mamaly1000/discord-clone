@@ -7,10 +7,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Form, FormItem, FormField, FormControl } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Plus, Smile } from "lucide-react";
+import { Plus } from "lucide-react";
 import axios from "axios";
 import qs from "query-string";
 import { useModal } from "@/hooks/use-modal-store";
+import EmojoPicker from "@/components/ui/EmojoPicker";
+import { useRouter } from "next/navigation";
 
 interface props {
   apiUrl: string;
@@ -26,7 +28,8 @@ const formSchema = z.object({
 type formValueType = z.infer<typeof formSchema>;
 
 const ChatInput: FC<props> = ({ apiUrl, name, query, type }) => {
-  const { data, onOpen } = useModal();
+  const { onOpen } = useModal();
+  const router = useRouter();
 
   const form = useForm<formValueType>({
     resolver: zodResolver(formSchema),
@@ -43,6 +46,8 @@ const ChatInput: FC<props> = ({ apiUrl, name, query, type }) => {
       });
       await axios.post(url, values).then((res) => {
         console.log(res.data.message);
+        form.reset();
+        router.refresh();
       });
     } catch (error) {
       console.log(error);
@@ -80,7 +85,11 @@ const ChatInput: FC<props> = ({ apiUrl, name, query, type }) => {
                       }`}
                     />
                     <div className="absolute top-7 right-8">
-                      <Smile />
+                      <EmojoPicker
+                        onChange={(val) =>
+                          field.onChange(field.value + " " + val)
+                        }
+                      />
                     </div>
                   </div>
                 </FormControl>
