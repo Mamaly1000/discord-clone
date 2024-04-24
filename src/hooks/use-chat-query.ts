@@ -3,7 +3,6 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import qs from "query-string";
 
 import { useSocket } from "@/providers/SocketProvider";
-import { Message } from "@prisma/client";
 import { safeMessageType } from "@/types";
 
 interface props {
@@ -18,6 +17,8 @@ const useChatQuery = ({ apiUrl, paramKey, paramValue, queryKey }: props) => {
 
   const fetchMessages = async ({
     pageParam = undefined,
+  }: {
+    pageParam?: string;
   }): Promise<{ items: safeMessageType[]; nextCursor: null | string }> => {
     const url = qs.stringifyUrl(
       {
@@ -42,11 +43,9 @@ const useChatQuery = ({ apiUrl, paramKey, paramValue, queryKey }: props) => {
     isLoading,
   } = useInfiniteQuery({
     queryKey: [queryKey],
-    queryFn: fetchMessages,
-    getNextPageParam: (lastPage: {
-      items: safeMessageType[];
-      nextCursor: null | string;
-    }) => lastPage?.nextCursor! as any,
+    queryFn: (params) => fetchMessages({ pageParam: params.pageParam }),
+    getNextPageParam: (lastPage: { nextCursor: null | string }) =>
+      lastPage?.nextCursor,
     refetchInterval: !isConnected ? 1000 : false,
     initialPageParam: undefined,
   });
