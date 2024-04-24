@@ -1,9 +1,10 @@
-import { QueryFunction, useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 import qs from "query-string";
-import { useParams } from "next/navigation";
 
 import { useSocket } from "@/providers/SocketProvider";
+import { Message } from "@prisma/client";
+import { safeMessageType } from "@/types";
 
 interface props {
   queryKey: string;
@@ -15,7 +16,9 @@ interface props {
 const useChatQuery = ({ apiUrl, paramKey, paramValue, queryKey }: props) => {
   const { isConnected } = useSocket();
 
-  const fetchMessages = async ({ pageParam = undefined }) => {
+  const fetchMessages = async ({
+    pageParam = undefined,
+  }): Promise<{ items: safeMessageType[]; nextCursor: null | string }> => {
     const url = qs.stringifyUrl(
       {
         url: apiUrl,
@@ -30,16 +33,31 @@ const useChatQuery = ({ apiUrl, paramKey, paramValue, queryKey }: props) => {
     const res = await fetch(url);
     return res.json();
   };
-  type qf = QueryFunction<unknown, string[], any> | undefined;
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
-    useInfiniteQuery({
-      queryKey: [queryKey],
-      queryFn: fetchMessages as qf,
-      getNextPageParam: (lastPage) => (lastPage as any)?.nextCursor! as any,
-      refetchInterval: isConnected ? 1000 : false,
-      initialPageParam: undefined,
-    });
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+    isLoading,
+  } = useInfiniteQuery({
+    queryKey: [queryKey],
+    queryFn: fetchMessages,
+    getNextPageParam: (lastPage: {
+      items: safeMessageType[];
+      nextCursor: null | string;
+    }) => lastPage?.nextCursor! as any,
+    refetchInterval: isConnected ? 1000 : false,
+    initialPageParam: undefined,
+  });
 
-  return { data, fetchNextPage, hasNextPage, isFetchingNextPage, status };
+  return {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+    isLoading,
+  };
 };
 export default useChatQuery;
