@@ -1,3 +1,4 @@
+import ChatVideoButton from "@/components/chat-video-button";
 import MobileToggle from "@/components/common/mobile-toggle";
 import SocketIndicator from "@/components/common/SocketIndicator";
 import UserAvatar from "@/components/common/UserAvatar";
@@ -25,6 +26,7 @@ const ChatHeader: FC<props> = ({ imageUrl, name, serverId, type }) => {
         {name}
       </p>
       <div className="ml-auto flex items-center">
+        {type === "conversation" && <ChatVideoButton />}
         <SocketIndicator />
       </div>
     </section>

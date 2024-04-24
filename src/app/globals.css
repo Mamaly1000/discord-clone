@@ -79,3 +79,6 @@ body,
 :root {
   height: 100%;
 }
+.lk-control-bar {
+  @apply flex items-center justify-center gap-x-5 gap-y-0 flex-wrap max-w-full min-w-full min-h-[150px] lg:min-h-fit;
+}

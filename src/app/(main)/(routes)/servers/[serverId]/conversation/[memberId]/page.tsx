@@ -1,3 +1,4 @@
+import MediaRoom from "@/components/media-room";
 import ChatHeader from "@/containers/chat/ChatHeader";
 import ChatInput from "@/containers/chat/ChatInput";
 import ChatMessagesContainer from "@/containers/chat/ChatMessagesContainer";
@@ -10,7 +11,9 @@ import React from "react";
 
 const ConversationPage = async ({
   params,
+  searchParams,
 }: {
+  searchParams: { video?: boolean };
   params: { serverId: string; memberId: string };
 }) => {
   const profile = await currentProfile();
@@ -48,27 +51,33 @@ const ConversationPage = async ({
         type="conversation"
         imageUrl={otherMember.profile.imageUrl}
       />
-      <ChatMessagesContainer
-        member={currentMember}
-        name={otherMember.profile.name}
-        chatId={conversation.id}
-        type="conversation"
-        apiUrl="/api/direct-messages"
-        paramKey="conversationId"
-        paramValue={conversation.id}
-        socketUrl="/api/socket/direct-messages"
-        socketQuery={{
-          conversationId: conversation.id,
-        }}
-      />
-      <ChatInput
-        name={otherMember.profile.name}
-        apiUrl="/api/socket/direct-messages"
-        type="conversation"
-        query={{
-          conversationId: conversation.id,
-        }}
-      />
+      {searchParams.video ? (
+        <MediaRoom chatId={conversation.id} audio={true} video={true} />
+      ) : (
+        <>
+          <ChatMessagesContainer
+            member={currentMember}
+            name={otherMember.profile.name}
+            chatId={conversation.id}
+            type="conversation"
+            apiUrl="/api/direct-messages"
+            paramKey="conversationId"
+            paramValue={conversation.id}
+            socketUrl="/api/socket/direct-messages"
+            socketQuery={{
+              conversationId: conversation.id,
+            }}
+          />
+          <ChatInput
+            name={otherMember.profile.name}
+            apiUrl="/api/socket/direct-messages"
+            type="conversation"
+            query={{
+              conversationId: conversation.id,
+            }}
+          />
+        </>
+      )}
     </div>
   );
 };

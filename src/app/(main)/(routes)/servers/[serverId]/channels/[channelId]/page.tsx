@@ -6,6 +6,7 @@ import { redirectToSignIn } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import ChatInput from "@/containers/chat/ChatInput";
 import ChatMessagesContainer from "@/containers/chat/ChatMessagesContainer";
+import MediaRoom from "@/components/media-room";
 
 const ChannelPage = async ({
   params,
@@ -35,26 +36,36 @@ const ChannelPage = async ({
         serverId={params.serverId}
         type="channel"
       />
-      <ChatMessagesContainer
-        socketUrl="/api/socket/messages"
-        apiUrl="/api/messages"
-        name={channel.name}
-        member={member}
-        type="channel"
-        socketQuery={{ channelId: channel.id, serverId: channel.serverId }}
-        paramKey="channelId"
-        paramValue={channel.id}
-        chatId={channel.id}
-      />
-      <ChatInput
-        name={channel.name}
-        type="channel"
-        apiUrl="/api/socket/messages"
-        query={{
-          channelId: channel.id,
-          serverId: channel.serverId,
-        }}
-      />
+      {channel.type === "TEXT" && (
+        <>
+          <ChatMessagesContainer
+            socketUrl="/api/socket/messages"
+            apiUrl="/api/messages"
+            name={channel.name}
+            member={member}
+            type="channel"
+            socketQuery={{ channelId: channel.id, serverId: channel.serverId }}
+            paramKey="channelId"
+            paramValue={channel.id}
+            chatId={channel.id}
+          />
+          <ChatInput
+            name={channel.name}
+            type="channel"
+            apiUrl="/api/socket/messages"
+            query={{
+              channelId: channel.id,
+              serverId: channel.serverId,
+            }}
+          />
+        </>
+      )}
+      {channel.type === "AUDIO" && (
+        <MediaRoom chatId={channel.id} audio={true} video={false} />
+      )}{" "}
+      {channel.type === "VIDEO" && (
+        <MediaRoom chatId={channel.id} audio={false} video={true} />
+      )}
     </div>
   );
 };
