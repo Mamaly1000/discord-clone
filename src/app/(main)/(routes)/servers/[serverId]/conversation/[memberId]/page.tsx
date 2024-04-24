@@ -1,4 +1,6 @@
 import ChatHeader from "@/containers/chat/ChatHeader";
+import ChatInput from "@/containers/chat/ChatInput";
+import ChatMessagesContainer from "@/containers/chat/ChatMessagesContainer";
 import { GET_OR_CREATE_CONVERSATION } from "@/lib/conversation";
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/prisma";
@@ -39,12 +41,33 @@ const ConversationPage = async ({
   const otherMember =
     memberOne.profileId === profile.id ? memberTwo : memberOne;
   return (
-    <div className="bg-white dark:bg-[#313338] flex flex-col h-full w-full">
+    <div className="bg-white dark:bg-[#313338] flex flex-col min-h-screen h-full min-w-full   items-start justify-start">
       <ChatHeader
         name={otherMember.profile.name}
         serverId={params.serverId}
         type="conversation"
         imageUrl={otherMember.profile.imageUrl}
+      />
+      <ChatMessagesContainer
+        member={currentMember}
+        name={otherMember.profile.name}
+        chatId={conversation.id}
+        type="conversation"
+        apiUrl="/api/direct-messages"
+        paramKey="conversationId"
+        paramValue={conversation.id}
+        socketUrl="/api/socket/direct-messages"
+        socketQuery={{
+          conversationId: conversation.id,
+        }}
+      />
+      <ChatInput
+        name={otherMember.profile.name}
+        apiUrl="/api/socket/direct-messages"
+        type="conversation"
+        query={{
+          conversationId: conversation.id,
+        }}
       />
     </div>
   );

@@ -8,6 +8,7 @@ import useChatQuery from "@/hooks/use-chat-query";
 import { Member } from "@prisma/client";
 import { format } from "date-fns";
 import { useChatSocket } from "@/hooks/use-chat-socket";
+import { useChatScroll } from "@/hooks/use-chat-scroll";
 
 interface props {
   name: string;
@@ -56,6 +57,13 @@ const ChatMessagesContainer: FC<props> = ({
   });
 
   useChatSocket({ addKey, queryKey, updateKey });
+  useChatScroll({
+    chatRef,
+    buttomRef,
+    loadMore: fetchNextPage,
+    shouldLoadMore: !isFetchingNextPage && !!hasNextPage,
+    count: data?.pages?.[0]?.items?.length ?? 0,
+  });
 
   if (isLoading || status === "pending") {
     return <Loader message="Loading messages..." />;

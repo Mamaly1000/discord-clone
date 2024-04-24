@@ -4,7 +4,7 @@ import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/prisma";
 import { redirectToSignIn } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
-import ChatInput from "@/components/ui/ChatInput";
+import ChatInput from "@/containers/chat/ChatInput";
 import ChatMessagesContainer from "@/containers/chat/ChatMessagesContainer";
 
 const ChannelPage = async ({
