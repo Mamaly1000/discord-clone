@@ -5,6 +5,7 @@ import { db } from "@/lib/prisma";
 import { redirectToSignIn } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import ChatInput from "@/components/ui/ChatInput";
+import ChatMessagesContainer from "@/containers/chat/ChatMessagesContainer";
 
 const ChannelPage = async ({
   params,
@@ -34,7 +35,17 @@ const ChannelPage = async ({
         serverId={params.serverId}
         type="channel"
       />
-      <div className="flex-1 w-full h-full p-6">future messages</div>
+      <ChatMessagesContainer
+        socketUrl="/api/socket/messages"
+        apiUrl="/api/messages"
+        name={channel.name}
+        member={member}
+        type="channel"
+        socketQuery={{ channelId: channel.id, serverId: channel.serverId }}
+        paramKey="channelId"
+        paramValue={channel.id}
+        chatId={channel.id}
+      />
       <ChatInput
         name={channel.name}
         type="channel"
