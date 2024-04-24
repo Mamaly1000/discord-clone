@@ -47,7 +47,7 @@ const useChatQuery = ({ apiUrl, paramKey, paramValue, queryKey }: props) => {
       items: safeMessageType[];
       nextCursor: null | string;
     }) => lastPage?.nextCursor! as any,
-    refetchInterval: isConnected ? 1000 : false,
+    refetchInterval: !isConnected ? 1000 : false,
     initialPageParam: undefined,
   });
 

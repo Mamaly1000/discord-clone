@@ -27,6 +27,8 @@ import { useForm } from "react-hook-form";
 import qs from "query-string";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useModal } from "@/hooks/use-modal-store";
+import { useParams, useRouter } from "next/navigation";
 
 interface props {
   message: safeMessageType;
@@ -46,7 +48,6 @@ const formSchema = z.object({
 type formValueType = z.infer<typeof formSchema>;
 
 const MessageCard: FC<props> = ({
-  index,
   message,
   currentMember,
   socketQuery,
@@ -55,7 +56,10 @@ const MessageCard: FC<props> = ({
   isUpdated,
   timeStamp,
 }) => {
-  const [isDeleting, setDeleting] = useState(false);
+  const router = useRouter();
+  const params = useParams();
+
+  const { onOpen } = useModal();
   const [isEditing, setEditing] = useState(false);
 
   const form = useForm<formValueType>({
@@ -74,6 +78,14 @@ const MessageCard: FC<props> = ({
   const isPDF = message.fileUrl?.split(".").pop() === "pdf";
   const isImage = !isPDF && !!message.fileUrl;
 
+  const onMemberClick = () => {
+    if (currentMember.id !== message.memberId) {
+      router.push(
+        `/servers/${params?.serverId}/conversation/${message.memberId}`
+      );
+    }
+  };
+
   const onSubmit = form.handleSubmit(async (values: formValueType) => {
     try {
       const url = qs.stringifyUrl({
@@ -87,20 +99,7 @@ const MessageCard: FC<props> = ({
       console.log(error);
     }
   });
-  const onDelete = async () => {
-    try {
-      const url = qs.stringifyUrl({
-        url: `${socketUrl}/${message.id}`,
-        query: socketQuery,
-      });
-      await axios.delete(url).then((res) => {
-        setDeleting(false);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  
+
   useEffect(() => {
     const keyDown = (ev: any) => {
       if (ev.key === "Escape" || ev.keyCode === 27) {
@@ -114,13 +113,19 @@ const MessageCard: FC<props> = ({
   return (
     <article className="relative group flex items-center hover:bg-black/5 p-4 transition w-full">
       <div className="group flex gap-x-2 items-start w-full">
-        <div className="cursor-pointer hover:drop-shadow-md transition">
+        <div
+          onClick={onMemberClick}
+          className="cursor-pointer hover:drop-shadow-md transition"
+        >
           <UserAvatar src={message.member.profile.imageUrl} />
         </div>
         <div className="flex flex-col w-full">
           <div className="flex items-center gap-x-2">
             <div className="flex items-center">
-              <p className="font-semibold text-sm hover:underline cursor-pointer">
+              <p
+                onClick={onMemberClick}
+                className="font-semibold text-sm hover:underline cursor-pointer"
+              >
                 {message.member.profile.name}
               </p>
               <CustomTooltip
@@ -168,10 +173,10 @@ const MessageCard: FC<props> = ({
               className={cn(
                 "text-sm text-zinc-600 dark:text-zinc-300 ",
                 deleted &&
-                  "italic text-zinc-500 dark:text-zinc-400 text-xs mt-1"
+                  "italic text-zinc-500 dark:text-zinc-400 capitalize text-xs mt-1"
               )}
             >
-              {message.content}
+              {deleted ? "this message has been deleted" : message.content}
               {isUpdated && !deleted && (
                 <span className="text-[10px] mx-2 text-zinc-500 capitalize">
                   edited
@@ -235,7 +240,15 @@ const MessageCard: FC<props> = ({
           )}
           <CustomTooltip label="Delete" align="center" side="top">
             <Trash
-              onClick={() => setDeleting(true)}
+              onClick={() =>
+                onOpen({
+                  type: "delete-message",
+                  data: {
+                    apiUrl: `${socketUrl}/${message.id}`,
+                    query: socketQuery,
+                  },
+                })
+              }
               className="w-4 h-4 cursor-pointer ml-auto text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition"
             />
           </CustomTooltip>

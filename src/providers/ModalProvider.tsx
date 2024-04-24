@@ -1,6 +1,7 @@
 "use client";
 import ChannelsModal from "@/components/modals/ChannelsModal";
 import DeleteChannelModal from "@/components/modals/DeleteChannelModal";
+import DeleteMessageModal from "@/components/modals/DeleteMessageModal";
 import DeleteServerModal from "@/components/modals/DeleteServerModal";
 import InviteModal from "@/components/modals/InviteModal";
 import LeaveServerModal from "@/components/modals/LeaveServerModal";
@@ -29,6 +30,7 @@ const ModalProvider = () => {
       <DeleteServerModal />
       <DeleteChannelModal />
       <ServerSettingModal />
+      <DeleteMessageModal />
     </>
   );
 };
