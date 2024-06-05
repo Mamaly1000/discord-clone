@@ -8,6 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import NavigationItem from "./NavigationItem";
 import { ModeToggle } from "@/components/common/toggle-theme";
 import { UserButton } from "@clerk/nextjs";
+import NotifBell from "@/components/ui/NotifBell";
 
 const NavigationSidebar = async () => {
   const profile = await currentProfile();
@@ -38,6 +39,7 @@ const NavigationSidebar = async () => {
         ))}
       </ScrollArea>
       <div className="pb-3 mt-auto flex flex-col items-center gap-y-4">
+        <NotifBell />
         <ModeToggle />
         <UserButton
           appearance={{
