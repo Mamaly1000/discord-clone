@@ -12,6 +12,7 @@ export async function GET(req: Request) {
 
     const cursor = searchParams.get("cursor");
     const conversationId = searchParams.get("conversationId");
+    const serverId = searchParams.get("serverId");
 
     if (!profile) {
       return new NextResponse("Unathorized !", { status: 401 });
@@ -45,6 +46,42 @@ export async function GET(req: Request) {
     let nextCursor = null;
     if (messages.length === MESSAGE_BATCH) {
       nextCursor = messages[MESSAGE_BATCH - 1].id;
+    }
+
+    if (serverId) {
+      try {
+        // delete seen notifications
+        const seenNotfications = await db.directNotification.findMany({
+          where: {
+            profileId: profile.id,
+            directMessageId: {
+              in: messages.map((m) => m.id),
+            },
+            isSeen: true,
+            serverId,
+          },
+        });
+        if (seenNotfications.length > 0) {
+          await db.directNotification.deleteMany({
+            where: {
+              id: { in: seenNotfications.map((n) => n.id) },
+            },
+          });
+        }
+        // set unseen notificatoins to seen
+        await db.directNotification.updateMany({
+          where: {
+            profileId: profile.id,
+            directMessageId: { in: messages.map((m) => m.id) },
+            isSeen: false,
+          },
+          data: {
+            isSeen: true,
+          },
+        });
+      } catch (error) {
+        console.log(`[ERROR-UPDATE-DELETE-NOTIFICATIONS]`, error);
+      }
     }
 
     return NextResponse.json({ items: messages, nextCursor });

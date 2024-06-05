@@ -3,7 +3,7 @@
 import React, { FC, useEffect, useState } from "react";
 
 import { safeMessageType } from "@/types";
-import { Member, MemberRole } from "@prisma/client";
+import { Member } from "@prisma/client";
 
 import CustomTooltip from "@/components/common/action-tooltip";
 
@@ -39,6 +39,8 @@ interface props {
   socketUrl: string;
   socketQuery: Record<string, string>;
   timeStamp: string;
+  isInNotification?: boolean;
+  IsMessageSeen?: boolean;
 }
 
 const formSchema = z.object({
@@ -55,11 +57,14 @@ const MessageCard: FC<props> = ({
   deleted,
   isUpdated,
   timeStamp,
+  isInNotification,
+  IsMessageSeen,
 }) => {
   const router = useRouter();
   const params = useParams();
 
   const { onOpen } = useModal();
+
   const [isEditing, setEditing] = useState(false);
 
   const form = useForm<formValueType>({
@@ -70,10 +75,8 @@ const MessageCard: FC<props> = ({
 
   const icon = roleIcon[message.member.role];
 
-  const isADMIN = message.member.role === MemberRole.ADMIN;
-  const isMODERATOR = isADMIN || message.member.role === MemberRole.MODERATOR;
   const isOwner = currentMember.id === message.member.id;
-  const canDelete = !deleted && (isADMIN || isMODERATOR || isOwner);
+  const canDelete = !deleted && currentMember.role !== "GUEST";
   const canEdit = !deleted && isOwner && !message.fileUrl;
   const isPDF = message.fileUrl?.split(".").pop() === "pdf";
   const isImage = !isPDF && !!message.fileUrl;
@@ -111,7 +114,14 @@ const MessageCard: FC<props> = ({
   }, []);
 
   return (
-    <article className="relative group flex items-center hover:bg-black/5 p-4 transition w-full">
+    <article
+      className={cn(
+        "relative group flex items-center hover:bg-black/5 p-4 transition-all w-full",
+        isInNotification &&
+          !IsMessageSeen &&
+          "bg-indigo-400/20 dark:bg-indigo-400/20"
+      )}
+    >
       <div className="group flex gap-x-2 items-start w-full">
         <div
           onClick={onMemberClick}
@@ -124,7 +134,7 @@ const MessageCard: FC<props> = ({
             <div className="flex items-center">
               <p
                 onClick={onMemberClick}
-                className="font-semibold text-sm hover:underline cursor-pointer"
+                className="font-semibold text-sm hover:underline cursor-pointer line-clamp-1"
               >
                 {message.member.profile.name}
               </p>

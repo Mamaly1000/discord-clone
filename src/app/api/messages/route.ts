@@ -1,6 +1,6 @@
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/prisma";
-import { Message } from "@prisma/client";
+import { Message, Profile } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 const MESSAGE_BATCH = 10;
@@ -21,7 +21,7 @@ export async function GET(req: Request) {
       return new NextResponse("Channel Id missing !", { status: 400 });
     }
 
-    let messages: Message[] = [];
+    let messages: Array<Message & { member: { profile: Profile } }> = [];
 
     if (cursor) {
       messages = await db.message.findMany({
@@ -46,6 +46,43 @@ export async function GET(req: Request) {
     let nextCursor = null;
     if (messages.length === MESSAGE_BATCH) {
       nextCursor = messages[MESSAGE_BATCH - 1].id;
+    }
+
+    // handle notifications
+    if (serverId) {
+      try {
+        // delete seen notifications
+        const seenNotfications = await db.notification.findMany({
+          where: {
+            profileId: profile.id,
+            messageId: {
+              in: messages.map((m) => m.id),
+            },
+            isSeen: true,
+            serverId,
+          },
+        });
+        if (seenNotfications.length > 0) {
+          await db.notification.deleteMany({
+            where: {
+              id: { in: seenNotfications.map((n) => n.id) },
+            },
+          });
+        }
+        // set unseen notificatoins to seen
+        await db.notification.updateMany({
+          where: {
+            profileId: profile.id,
+            messageId: { in: messages.map((m) => m.id) },
+            isSeen: false,
+          },
+          data: {
+            isSeen: true,
+          },
+        });
+      } catch (error) {
+        console.log(`[ERROR-UPDATE-DELETE-NOTIFICATIONS]`, error);
+      }
     }
 
     return NextResponse.json({ items: messages, nextCursor });

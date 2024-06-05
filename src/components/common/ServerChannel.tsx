@@ -12,9 +12,15 @@ interface props {
   channel: Channel;
   server: Server;
   role?: MemberRole;
+  hasNotification?: boolean;
 }
 
-const ServerChannel: FC<props> = ({ channel, server, role }) => {
+const ServerChannel: FC<props> = ({
+  channel,
+  server,
+  role,
+  hasNotification,
+}) => {
   const { onOpen } = useModal();
 
   const Icon = iconMapRaw[channel.type];
@@ -24,6 +30,7 @@ const ServerChannel: FC<props> = ({ channel, server, role }) => {
   const onClick = () => {
     if (params?.channelId !== channel.id || !!!params?.channelId)
       router.push(`/servers/${params?.serverId}/channels/${channel?.id}`);
+    router.refresh();
   };
   const onAction = (e: React.MouseEvent, type: ModalType) => {
     e.stopPropagation();
@@ -51,6 +58,9 @@ const ServerChannel: FC<props> = ({ channel, server, role }) => {
       >
         {channel.name}
       </p>
+      {hasNotification && (
+        <div className="min-w-[10px] min-h-[10px] rounded-full drop-shadow-2xl bg-indigo-500" />
+      )}
       {channel.name.toLowerCase() !== "general" &&
         role !== MemberRole.GUEST && (
           <div className="ml-auto flex items-center gap-x-2">

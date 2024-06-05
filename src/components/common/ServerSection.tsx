@@ -11,6 +11,7 @@ interface props {
   sectionType: "channel" | "member";
   channelType?: ChannelType;
   server?: Server_Members_Profiles_channels;
+  hasNotification?: boolean;
 }
 const ServerSection: FC<props> = ({
   label,
@@ -18,6 +19,7 @@ const ServerSection: FC<props> = ({
   sectionType,
   server,
   channelType,
+  hasNotification = false,
 }) => {
   const { onOpen } = useModal();
   return (
@@ -25,6 +27,7 @@ const ServerSection: FC<props> = ({
       <p className="text-xs uppercase font-semibold text-zinc-500 dark:text-zinc-400">
         {label}
       </p>
+
       {role !== MemberRole.GUEST && sectionType === "channel" && (
         <CustomTooltip label="Create Channel" side="top" align="center">
           <button

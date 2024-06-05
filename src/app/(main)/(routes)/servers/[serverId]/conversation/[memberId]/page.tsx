@@ -20,6 +20,7 @@ const ConversationPage = async ({
   if (!profile) {
     return redirectToSignIn();
   }
+
   const currentMember = await db.member.findFirst({
     where: {
       serverId: params.serverId,
@@ -66,6 +67,7 @@ const ConversationPage = async ({
             socketUrl="/api/socket/direct-messages"
             socketQuery={{
               conversationId: conversation.id,
+              serverId: currentMember.serverId,
             }}
           />
           <ChatInput

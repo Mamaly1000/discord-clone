@@ -1,6 +1,7 @@
 import serverAuth from "@/lib/current-profile-pages";
 import { db } from "@/lib/prisma";
 import { NextApiResponseServerIo } from "@/types";
+import { NotificationType } from "@prisma/client";
 import { NextApiRequest } from "next";
 
 export default async function handler(
@@ -68,8 +69,32 @@ export default async function handler(
         },
       },
     });
+    try {
+      // create notification
+      const profiles = await db.profile.findMany({
+        where: {
+          id: {
+            not: message.member.profile.id,
+            in: server.members.map((m) => m.profileId),
+          },
+        },
+      });
+
+      await db.notification.createMany({
+        data: profiles.map((p) => ({
+          channelId: channel.id,
+          messageId: message.id,
+          profileId: p.id,
+          type: NotificationType.CHANNEL_NOTIF,
+          serverId: server.id,
+        })),
+      });
+    } catch (error) {
+      console.log(`[NOTIFICATION-CREATE-MESSAGE-ERROR]`, error);
+    }
     // create a key for our socket and pass the message to it
     const channelKey = `chat:${channel.id}:messages`;
+    // add a message to the socket
     res?.socket?.server?.io?.emit(channelKey, message);
     // send response with status 200
     return res.status(200).json(message);

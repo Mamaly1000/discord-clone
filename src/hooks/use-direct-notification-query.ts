@@ -2,38 +2,31 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 
 import qs from "query-string";
 
-import { useSocket } from "@/providers/SocketProvider";
-import { safeMessageType } from "@/types";
+import { safeDirectNotification } from "@/types";
 
 interface props {
-  queryKey: string;
-  apiUrl: string;
-  paramKey: "channelId" | "conversationId";
-  paramValue: string;
+  limit?: number;
   serverId?: string;
+  channelId?: string;
 }
 
-const useChatQuery = ({
-  apiUrl,
-  paramKey,
-  paramValue,
-  queryKey,
-  serverId,
-}: props) => {
-  const { isConnected } = useSocket();
-
-  const fetchMessages = async ({
+const useDirectNotificationQuery = (params?: props) => {
+  const fetchNotifications = async ({
     pageParam = undefined,
   }: {
     pageParam?: string;
-  }): Promise<{ items: safeMessageType[]; nextCursor: null | string }> => {
+  }): Promise<{
+    items: safeDirectNotification[];
+    nextCursor: null | string;
+  }> => {
     const url = qs.stringifyUrl(
       {
-        url: apiUrl,
+        url: `/api/direct-notification`,
         query: {
           cursor: pageParam,
-          [paramKey]: paramValue,
-          serverId,
+          limit: params?.limit,
+          channelId: params?.channelId,
+          serverId: params?.serverId,
         },
       },
       { skipNull: true }
@@ -50,11 +43,16 @@ const useChatQuery = ({
     status,
     isLoading,
   } = useInfiniteQuery({
-    queryKey: [queryKey],
-    queryFn: (params) => fetchMessages({ pageParam: params.pageParam }),
+    queryKey: [
+      `/api/direct-notification`,
+      params?.channelId,
+      params?.serverId,
+      params?.limit,
+    ],
+    queryFn: (params) => fetchNotifications({ pageParam: params.pageParam }),
     getNextPageParam: (lastPage: { nextCursor: null | string }) =>
       lastPage?.nextCursor,
-    refetchInterval: !isConnected ? 1000 : false,
+    refetchInterval: 5000,
     initialPageParam: undefined,
   });
 
@@ -67,4 +65,4 @@ const useChatQuery = ({
     isLoading,
   };
 };
-export default useChatQuery;
+export default useDirectNotificationQuery;

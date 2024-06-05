@@ -40,6 +40,27 @@ const ServerSidebar = async ({ serverId }: { serverId: string }) => {
     return redirect("/");
   }
 
+  const notifications =
+    (await db.notification.findMany({
+      where: {
+        profileId: profile.id,
+        serverId: server.id,
+        isSeen: false,
+      },
+    })) || [];
+
+  const directNotifications =
+    (await db.directNotification.findMany({
+      where: {
+        serverId: server.id,
+        profileId: profile.id,
+        isSeen: false,
+      },
+      include: {
+        directMessage: { include: { member: true } },
+      },
+    })) || [];
+
   const TextChannels = server.channels.filter(
     (channel) => channel.type === ChannelType.TEXT
   );
@@ -116,6 +137,9 @@ const ServerSidebar = async ({ serverId }: { serverId: string }) => {
                     server={server}
                     channel={channel}
                     key={channel.id}
+                    hasNotification={
+                      !!notifications.find((n) => n.channelId === channel.id)
+                    }
                   />
                 ))}
               </div>
@@ -137,6 +161,9 @@ const ServerSidebar = async ({ serverId }: { serverId: string }) => {
                     server={server}
                     channel={channel}
                     key={channel.id}
+                    hasNotification={
+                      !!notifications.find((n) => n.channelId === channel.id)
+                    }
                   />
                 ))}
               </div>
@@ -158,6 +185,9 @@ const ServerSidebar = async ({ serverId }: { serverId: string }) => {
                     server={server}
                     channel={channel}
                     key={channel.id}
+                    hasNotification={
+                      !!notifications.find((n) => n.channelId === channel.id)
+                    }
                   />
                 ))}
               </div>
@@ -178,6 +208,11 @@ const ServerSidebar = async ({ serverId }: { serverId: string }) => {
                     role={myRole}
                     member={member}
                     key={member.id}
+                    hasNotification={
+                      !!directNotifications.find(
+                        (n) => n.directMessage.member.id === member.id
+                      )
+                    }
                   />
                 ))}
               </div>

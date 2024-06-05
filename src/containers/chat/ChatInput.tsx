@@ -13,6 +13,7 @@ import qs from "query-string";
 import { useModal } from "@/hooks/use-modal-store";
 import EmojoPicker from "@/components/ui/EmojoPicker";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface props {
   apiUrl: string;
@@ -45,12 +46,12 @@ const ChatInput: FC<props> = ({ apiUrl, name, query, type }) => {
         query,
       });
       await axios.post(url, values).then((res) => {
-        console.log(res.data.message);
         form.reset();
         router.refresh();
       });
     } catch (error) {
       console.log(error);
+      toast.error("something went wrong!");
     }
   });
 

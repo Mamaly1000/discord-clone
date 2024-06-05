@@ -9,6 +9,8 @@ import { Member } from "@prisma/client";
 import { format } from "date-fns";
 import { useChatSocket } from "@/hooks/use-chat-socket";
 import { useChatScroll } from "@/hooks/use-chat-scroll";
+import useNotificationQuery from "@/hooks/use-notification-query";
+import useDirectNotificationQuery from "@/hooks/use-direct-notification-query";
 
 interface props {
   name: string;
@@ -42,6 +44,19 @@ const ChatMessagesContainer: FC<props> = ({
   const chatRef = useRef<ElementRef<"div">>(null);
   const buttomRef = useRef<ElementRef<"div">>(null);
 
+  const { data: notifications_data } = useNotificationQuery({
+    serverId: socketQuery?.serverId,
+  });
+  const notifications =
+    notifications_data?.pages.map((p) => p.items.map((n) => n)).flat() || [];
+
+  const { data: direct_notifications_data } = useDirectNotificationQuery({
+    serverId: socketQuery?.serverId,
+  });
+  const direct_notifications =
+    direct_notifications_data?.pages.map((p) => p.items.map((n) => n)).flat() ||
+    [];
+
   const {
     data,
     fetchNextPage,
@@ -54,6 +69,7 @@ const ChatMessagesContainer: FC<props> = ({
     apiUrl,
     paramKey,
     paramValue,
+    serverId: socketQuery?.serverId,
   });
 
   useChatSocket({ addKey, queryKey, updateKey });
@@ -94,23 +110,47 @@ const ChatMessagesContainer: FC<props> = ({
         </div>
       )}
       <div className="flex flex-col-reverse mt-auto">
-        {data?.pages?.map((group, i) => (
-          <Fragment key={i}>
-            {group.items.map((message, i) => (
-              <MessageCard
-                deleted={message.deleted}
-                currentMember={member}
-                message={message}
-                key={message.id}
-                socketQuery={socketQuery}
-                socketUrl={socketUrl}
-                isUpdated={message.updatedAt !== message.createdAt}
-                index={i}
-                timeStamp={format(new Date(message.createdAt), date_format)}
-              />
-            ))}
-          </Fragment>
-        ))}
+        {data?.pages?.map((group, i) => {
+          return (
+            <Fragment key={i}>
+              {group.items.map((message, i) => {
+                let IsMessageSeen = false;
+                let isInNotification = false;
+                if (type === "channel") {
+                  IsMessageSeen = !!notifications.find(
+                    (n) => n.message.id === message.id
+                  )?.isSeen;
+                  isInNotification = !!notifications.find(
+                    (n) => n.message.id === message.id
+                  );
+                }
+                if (type === "conversation") {
+                  IsMessageSeen = !!direct_notifications.find(
+                    (n) => n.directMessage.id === message.id
+                  )?.isSeen;
+                  isInNotification = !!direct_notifications.find(
+                    (n) => n.directMessage.id === message.id
+                  );
+                }
+                return (
+                  <MessageCard
+                    deleted={message.deleted}
+                    currentMember={member}
+                    message={message}
+                    key={message.id}
+                    socketQuery={socketQuery}
+                    socketUrl={socketUrl}
+                    isUpdated={message.updatedAt !== message.createdAt}
+                    index={i}
+                    timeStamp={format(new Date(message.createdAt), date_format)}
+                    IsMessageSeen={IsMessageSeen}
+                    isInNotification={isInNotification}
+                  />
+                );
+              })}
+            </Fragment>
+          );
+        })}
       </div>
       <div ref={buttomRef} />
     </div>

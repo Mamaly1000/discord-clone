@@ -1,6 +1,7 @@
 import serverAuth from "@/lib/current-profile-pages";
 import { db } from "@/lib/prisma";
 import { NextApiResponseServerIo } from "@/types";
+import { NotificationType } from "@prisma/client";
 import { NextApiRequest } from "next";
 
 export default async function handler(
@@ -47,6 +48,10 @@ export default async function handler(
       conversation.memberOne.profileId === profile.id
         ? conversation.memberOne
         : conversation.memberTwo;
+    const reciever =
+      conversation.memberOne.profileId !== profile.id
+        ? conversation.memberOne
+        : conversation.memberTwo;
     if (!member) {
       return res.status(404).json({ message: "Member not found!" });
     }
@@ -66,6 +71,20 @@ export default async function handler(
         },
       },
     });
+    try {
+      // create notification
+      await db.directNotification.create({
+        data: {
+          conversationId: conversation.id,
+          directMessageId: message.id,
+          profileId: reciever.profileId,
+          type: NotificationType.CONVERSATION_NOTIF,
+          serverId: conversation.memberOne.serverId,
+        },
+      });
+    } catch (error) {
+      console.log(`[DIRECT-NOTIFICATION-CREATE-MESSAGE-ERROR]`, error);
+    }
     // create a key for our socket and pass the message to it
     const conversatoinKey = `chat:${conversation.id}:messages`;
     res?.socket?.server?.io?.emit(conversatoinKey, message);

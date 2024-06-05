@@ -1,8 +1,11 @@
 import {
   Channel,
   Conversation,
+  DirectMessage,
+  DirectNotification,
   Member,
   Message,
+  Notification,
   Profile,
   Server,
 } from "@prisma/client";
@@ -27,4 +30,12 @@ export type NextApiResponseServerIo = NextApiResponse & {
 };
 export type safeMessageType = Message & {
   member: Member & { profile: Profile };
+};
+export type safeNotificationType = Notification & {
+  message: Message & { member: Member & { profile: Profile } };
+  channel: Channel;
+};
+export type safeDirectNotification = DirectNotification & {
+  directMessage: DirectMessage & { member: Member & { profile: Profile } };
+  conversation: Conversation;
 };

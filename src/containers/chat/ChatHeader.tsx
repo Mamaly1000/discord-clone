@@ -14,7 +14,7 @@ interface props {
 
 const ChatHeader: FC<props> = ({ imageUrl, name, serverId, type }) => {
   return (
-    <section className="w-full text-md font-semibold px-3 flex items-center h-12 border-neutral-200 dark:border-neutral-800 border-b-2  ">
+    <section className="w-full text-md font-semibold px-3 flex items-center h-12 border-neutral-200 dark:border-neutral-800 border-b-2   line-clamp-1">
       <MobileToggle serverId={serverId} />
       {type === "channel" && (
         <Hash className="w-5 h-5 mr-2 text-zinc-500 dark:text-zinc-400" />
@@ -22,8 +22,8 @@ const ChatHeader: FC<props> = ({ imageUrl, name, serverId, type }) => {
       {type === "conversation" && (
         <UserAvatar src={imageUrl} className="w-8 h-8 md:w-8 md:h-8 mr-2 " />
       )}
-      <p className="font-semibold text-md text-black dark:text-white  capitalize">
-        {name}
+      <p className="font-semibold text-md text-black dark:text-white  capitalize line-clamp-1">
+        {name.slice(0, 20)}
       </p>
       <div className="ml-auto flex items-center">
         {type === "conversation" && <ChatVideoButton />}

@@ -10,8 +10,9 @@ interface props {
   member: Member & { profile: Profile };
   server: Server;
   role?: MemberRole;
+  hasNotification?: boolean;
 }
-const ServerMember: FC<props> = ({ member }) => {
+const ServerMember: FC<props> = ({ member, hasNotification }) => {
   const router = useRouter();
   const params = useParams();
 
@@ -19,9 +20,10 @@ const ServerMember: FC<props> = ({ member }) => {
   const isActive = params?.memberId === member.id;
   return (
     <button
-      onClick={() =>
-        router.push(`/servers/${params?.serverId}/conversation/${member.id}`)
-      }
+      onClick={() => {
+        router.push(`/servers/${params?.serverId}/conversation/${member.id}`);
+        router.refresh();
+      }}
       className={cn(
         "group p-2 rounded-md flex items-center gap-x-2 w-full hover:bg-zinc-700/10 dark:hover:bg-zinc-700/50 transition mb-1",
         isActive && "bg-zinc-700/20 dark:bg-zinc-700"
@@ -41,6 +43,9 @@ const ServerMember: FC<props> = ({ member }) => {
         {member.profile.name}
       </p>
       {icon}
+      {hasNotification && (
+        <div className="min-w-[10px] min-h-[10px] rounded-full drop-shadow-2xl bg-indigo-500" />
+      )}
     </button>
   );
 };
