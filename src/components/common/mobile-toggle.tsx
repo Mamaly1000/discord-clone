@@ -5,10 +5,11 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "../ui/button";
 import NavigationSidebar from "@/containers/server-navigation/NavigationSidebar";
 import ServerSidebar from "@/containers/server-sidebar/ServerSidebar";
+import MobileNavSheet from "./MobileNavSheet";
 
 const MobileToggle = ({ serverId }: { serverId: string }) => {
   return (
-    <Sheet>
+    <MobileNavSheet>
       <SheetTrigger asChild>
         <Button variant={"ghost"} size={"icon"} className="md:hidden">
           <Menu />
@@ -20,7 +21,7 @@ const MobileToggle = ({ serverId }: { serverId: string }) => {
         </div>
         <ServerSidebar serverId={serverId} />
       </SheetContent>
-    </Sheet>
+    </MobileNavSheet>
   );
 };
 

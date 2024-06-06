@@ -11,6 +11,7 @@ export async function GET(req: Request) {
 
     const cursor = searchParams.get("cursor");
     const conversationId = searchParams.get("conversationId");
+    const memberId = searchParams.get("memberId");
     const serverId = searchParams.get("serverId");
     const limit = searchParams.get("limit");
     const NOTIFICATIONS_BATCH = !!limit ? +limit : undefined;
@@ -34,7 +35,17 @@ export async function GET(req: Request) {
     if (conversationId) {
       where.conversationId = conversationId;
     }
-
+    if (memberId) {
+      const targetConversation = await db.conversation.findFirst({
+        where: {
+          OR: [
+            { memberOneId: memberId, memberTwo: { profileId: profile.id } },
+            { memberOne: { profileId: profile.id }, memberTwoId: memberId },
+          ],
+        },
+      });
+      where.conversationId = targetConversation?.id;
+    }
     if (!!cursor && !!NOTIFICATIONS_BATCH) {
       notifications = await db.directNotification.findMany({
         where,

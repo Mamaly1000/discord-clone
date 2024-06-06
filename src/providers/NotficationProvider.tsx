@@ -1,22 +1,23 @@
 "use client";
+import UserAvatar from "@/components/common/UserAvatar";
 import useDirectNotificationQuery from "@/hooks/use-direct-notification-query";
 import { useDirectNotifications } from "@/hooks/use-direct-notification-store";
+import { useNotifBar } from "@/hooks/use-notification-bar-store";
 import useNotificationQuery from "@/hooks/use-notification-query";
 import { useNotifications } from "@/hooks/use-notification-store";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNowStrict } from "date-fns";
 import { useTheme } from "next-themes";
-import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { ReactNode, useEffect, useLayoutEffect, useState } from "react";
+import { ReactNode, useEffect } from "react";
 import { toast, Toaster } from "sonner";
 
 const NotficationProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const params = useParams();
-  const [deviceWidth, setWidth] = useState(701);
 
   const { resolvedTheme } = useTheme();
+  const { open: isNotifBarOpen } = useNotifBar();
 
   const { data: notifications_data, isLoading: notifications_isLoading } =
     useNotificationQuery({ serverId: params?.serverId as string });
@@ -87,13 +88,9 @@ const NotficationProvider = ({ children }: { children: ReactNode }) => {
             : `${n.message?.member.profile.name} sent a Documnent`;
           toast.message(notificationMessage, {
             icon: (
-              <Image
+              <UserAvatar
+                className="w-[30px] h-[30px] md:w-[30px] md:h-[30px]"
                 src={n.message.member.profile.imageUrl}
-                alt="profile image"
-                width={70}
-                height={70}
-                unoptimized
-                className="rounded-full object-contain drop-shadow-2xl min-w-[100px] min-h-[100px]"
               />
             ),
             action: {
@@ -133,13 +130,9 @@ const NotficationProvider = ({ children }: { children: ReactNode }) => {
             : `${n.directMessage?.member.profile.name} sent a Documnent`;
           toast.message(notificationMessage, {
             icon: (
-              <Image
+              <UserAvatar
                 src={n.directMessage.member.profile.imageUrl}
-                alt="profile image"
-                width={70}
-                height={70}
-                unoptimized
-                className="rounded-full object-contain drop-shadow-2xl min-w-[100px] min-h-[100px]"
+                className="w-[30px] h-[30px] md:w-[30px] md:h-[30px]"
               />
             ),
             action: {
@@ -167,10 +160,6 @@ const NotficationProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [direct_notifications]);
 
-  useLayoutEffect(() => {
-    setWidth(window.innerWidth);
-  }, []);
-
   return (
     <>
       {children}
@@ -178,8 +167,13 @@ const NotficationProvider = ({ children }: { children: ReactNode }) => {
         pauseWhenPageIsHidden
         visibleToasts={3}
         theme={resolvedTheme as any}
-        cn={(c) => cn("bg-[#e3e5e8] dark:bg-[#1e1f22]", c)}
-        position={deviceWidth > 700 ? "top-right" : "top-center"}
+        cn={(c) => cn("bg-[#e3e5e8] dark:bg-[#1e1f22] z-[1000] ", c)}
+        position={isNotifBarOpen ? "top-left" : "top-right"}
+        toastOptions={{
+          classNames: {
+            icon: "w-[30px] h-[30px]",
+          },
+        }}
       />
     </>
   );

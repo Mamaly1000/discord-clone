@@ -61,7 +61,7 @@ const ChatInput: FC<props> = ({ apiUrl, name, query, type }) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={onSubmit} className="w-full max-w-full">
+      <form onSubmit={onSubmit} className="w-full max-w-full sticky bottom-0 left-0 right-0 bg-[#ffffff] dark:bg-[#313338] z-10 ">
         <FormField
           control={form.control}
           name="content"

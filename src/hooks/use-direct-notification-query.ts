@@ -7,7 +7,10 @@ import { safeDirectNotification } from "@/types";
 interface props {
   limit?: number;
   serverId?: string;
-  channelId?: string;
+  memberId?: string;
+  startDate?: Date;
+  endDate?: Date;
+  conversationId?: string;
 }
 
 const useDirectNotificationQuery = (params?: props) => {
@@ -25,8 +28,9 @@ const useDirectNotificationQuery = (params?: props) => {
         query: {
           cursor: pageParam,
           limit: params?.limit,
-          channelId: params?.channelId,
+          memberId: params?.memberId,
           serverId: params?.serverId,
+          conversationId: params?.conversationId,
         },
       },
       { skipNull: true }
@@ -42,10 +46,11 @@ const useDirectNotificationQuery = (params?: props) => {
     isFetchingNextPage,
     status,
     isLoading,
+    refetch,
   } = useInfiniteQuery({
     queryKey: [
       `/api/direct-notification`,
-      params?.channelId,
+      params?.memberId,
       params?.serverId,
       params?.limit,
     ],
@@ -54,6 +59,8 @@ const useDirectNotificationQuery = (params?: props) => {
       lastPage?.nextCursor,
     refetchInterval: 5000,
     initialPageParam: undefined,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
 
   return {
@@ -63,6 +70,7 @@ const useDirectNotificationQuery = (params?: props) => {
     isFetchingNextPage,
     status,
     isLoading,
+    refetch,
   };
 };
 export default useDirectNotificationQuery;

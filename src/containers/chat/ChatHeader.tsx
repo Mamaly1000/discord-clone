@@ -14,7 +14,7 @@ interface props {
 
 const ChatHeader: FC<props> = ({ imageUrl, name, serverId, type }) => {
   return (
-    <section className="w-full text-md font-semibold px-3 flex items-center h-12 border-neutral-200 dark:border-neutral-800 border-b-2   line-clamp-1">
+    <section className="w-full bg-[#ffffff] dark:bg-[#313338] z-10 text-md font-semibold px-3 flex items-center h-12 border-neutral-200 dark:border-neutral-800 border-b-2 sticky top-0 left-0 right-0  line-clamp-1">
       <MobileToggle serverId={serverId} />
       {type === "channel" && (
         <Hash className="w-5 h-5 mr-2 text-zinc-500 dark:text-zinc-400" />

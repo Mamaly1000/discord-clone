@@ -12,6 +12,8 @@ export async function GET(req: Request) {
     const channelId = searchParams.get("channelId");
     const serverId = searchParams.get("serverId");
     const limit = searchParams.get("limit");
+    const startDate = searchParams.get("startDate");
+    const endDate = searchParams.get("endDate");
     const NOTIFICATIONS_BATCH = !!limit ? +limit : undefined;
 
     if (!profile) {
@@ -37,6 +39,14 @@ export async function GET(req: Request) {
       where.channelId = channelId;
     }
 
+    if (!!startDate && !!endDate) {
+      where.createdAt = { gte: new Date(startDate), lte: new Date(endDate) };
+    } else if (!!startDate) {
+      where.createdAt = { gte: new Date(startDate) };
+    } else if (!!endDate) {
+      where.createdAt = { lte: new Date(endDate) };
+    }
+
     if (!!cursor && !!NOTIFICATIONS_BATCH) {
       notifications = await db.notification.findMany({
         where,
@@ -50,6 +60,7 @@ export async function GET(req: Request) {
       notifications = await db.notification.findMany({
         where,
         include,
+        take: NOTIFICATIONS_BATCH,
         orderBy: { createdAt: "desc" },
       });
     }

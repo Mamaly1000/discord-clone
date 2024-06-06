@@ -1,5 +1,4 @@
 import NavigationSidebar from "@/containers/server-navigation/NavigationSidebar";
-import ServerNotifSheet from "@/containers/server-notification/ServerNotifSheet";
 
 export default async function RootLayout({
   children,
@@ -14,7 +13,6 @@ export default async function RootLayout({
       <main className="md:pl-[72px] h-full min-h-screen  w-full">
         {children}
       </main>
-      <ServerNotifSheet />
     </section>
   );
 }

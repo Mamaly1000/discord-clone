@@ -8,6 +8,8 @@ interface props {
   limit?: number;
   serverId?: string;
   channelId?: string;
+  startDate?: Date;
+  endDate?: Date;
 }
 
 const useNotificationQuery = (params?: props) => {
@@ -39,6 +41,7 @@ const useNotificationQuery = (params?: props) => {
     isFetchingNextPage,
     status,
     isLoading,
+    refetch,
   } = useInfiniteQuery({
     queryKey: [
       `/api/notification`,
@@ -51,6 +54,8 @@ const useNotificationQuery = (params?: props) => {
       lastPage?.nextCursor,
     refetchInterval: 5000,
     initialPageParam: undefined,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
 
   return {
@@ -60,6 +65,7 @@ const useNotificationQuery = (params?: props) => {
     isFetchingNextPage,
     status,
     isLoading,
+    refetch,
   };
 };
 export default useNotificationQuery;

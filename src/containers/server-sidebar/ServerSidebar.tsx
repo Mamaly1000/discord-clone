@@ -11,6 +11,7 @@ import ServerSection from "@/components/common/ServerSection";
 import ServerChannel from "@/components/common/ServerChannel";
 import { iconMap, roleIcon } from "@/components/common/icons";
 import ServerMember from "@/components/common/ServerMember";
+import ServerNotifSheet from "../server-notification/ServerNotifSheet";
 
 const ServerSidebar = async ({ serverId }: { serverId: string }) => {
   const profile = await currentProfile();
@@ -220,6 +221,11 @@ const ServerSidebar = async ({ serverId }: { serverId: string }) => {
           )}
         </div>
       </ScrollArea>
+      <ServerNotifSheet
+        server={server}
+        channels={server.channels}
+        members={members}
+      />
     </section>
   );
 };

@@ -24,6 +24,7 @@ const NavigationSidebar = async () => {
       },
     },
   });
+
   return (
     <section className="flex-col gap-4 flex items-center h-full text-primary w-full bg-[#e3e5e8] dark:bg-[#1e1f22] py-4 ">
       <NavigationAction />
