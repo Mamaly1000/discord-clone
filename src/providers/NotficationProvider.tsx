@@ -5,6 +5,7 @@ import { useDirectNotifications } from "@/hooks/use-direct-notification-store";
 import { useNotifBar } from "@/hooks/use-notification-bar-store";
 import useNotificationQuery from "@/hooks/use-notification-query";
 import { useNotifications } from "@/hooks/use-notification-store";
+import { useSoundPlayer } from "@/hooks/use-sound-player";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNowStrict } from "date-fns";
 import { useTheme } from "next-themes";
@@ -18,6 +19,7 @@ const NotficationProvider = ({ children }: { children: ReactNode }) => {
 
   const { resolvedTheme } = useTheme();
   const { open: isNotifBarOpen } = useNotifBar();
+  const { onPlay, sound } = useSoundPlayer();
 
   const { data: notifications_data, isLoading: notifications_isLoading } =
     useNotificationQuery({ serverId: params?.serverId as string });
@@ -86,6 +88,7 @@ const NotficationProvider = ({ children }: { children: ReactNode }) => {
             : fileType !== "pdf"
             ? `${n.message?.member.profile.name} sent an Image`
             : `${n.message?.member.profile.name} sent a Documnent`;
+          onPlay(sound);
           toast.message(notificationMessage, {
             icon: (
               <UserAvatar
@@ -128,6 +131,7 @@ const NotficationProvider = ({ children }: { children: ReactNode }) => {
             : fileType !== "pdf"
             ? `${n.directMessage?.member.profile.name} sent an Image`
             : `${n.directMessage?.member.profile.name} sent a Documnent`;
+          onPlay(sound);
           toast.message(notificationMessage, {
             icon: (
               <UserAvatar
@@ -172,6 +176,7 @@ const NotficationProvider = ({ children }: { children: ReactNode }) => {
         toastOptions={{
           classNames: {
             icon: "w-[30px] h-[30px]",
+            title: "line-clamp-1",
           },
         }}
       />

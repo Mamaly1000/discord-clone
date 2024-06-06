@@ -26,6 +26,8 @@ const useNotificationQuery = (params?: props) => {
           limit: params?.limit,
           channelId: params?.channelId,
           serverId: params?.serverId,
+          startDate: params?.startDate?.toISOString(),
+          endDate: params?.endDate?.toISOString(),
         },
       },
       { skipNull: true }
@@ -48,6 +50,8 @@ const useNotificationQuery = (params?: props) => {
       params?.channelId,
       params?.serverId,
       params?.limit,
+      params?.startDate,
+      params?.endDate,
     ],
     queryFn: (params) => fetchNotifications({ pageParam: params.pageParam }),
     getNextPageParam: (lastPage: { nextCursor: null | string }) =>

@@ -8,6 +8,7 @@ import ModalProvider from "@/providers/ModalProvider";
 import SocketProvider from "@/providers/SocketProvider";
 import QueryPrvider from "@/providers/QueryPrvider";
 import NotficationProvider from "@/providers/NotficationProvider";
+import SoundProvider from "@/providers/SoundProvider";
 
 const font = Open_Sans({ subsets: ["latin"] });
 
@@ -33,12 +34,14 @@ export default function RootLayout({
             enableSystem
           >
             <SocketProvider>
-              <QueryPrvider>
-                <NotficationProvider>
-                  <ModalProvider />
-                  {children}
-                </NotficationProvider>
-              </QueryPrvider>
+              <SoundProvider>
+                <QueryPrvider>
+                  <NotficationProvider>
+                    <ModalProvider />
+                    {children}
+                  </NotficationProvider>
+                </QueryPrvider>
+              </SoundProvider>
             </SocketProvider>
           </ThemeProvider>
         </body>

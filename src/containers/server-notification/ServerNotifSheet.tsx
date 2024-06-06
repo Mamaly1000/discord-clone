@@ -2,10 +2,8 @@
 import React, { useEffect, useState } from "react";
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
@@ -13,7 +11,7 @@ import { useNotifBar } from "@/hooks/use-notification-bar-store";
 import useNotificationQuery from "@/hooks/use-notification-query";
 import { DatePickerWithRange } from "@/components/ui/RangePicker";
 import { DateRange } from "react-day-picker";
-import { sub } from "date-fns";
+import { add, sub } from "date-fns";
 import { Channel, Member, Profile, Server } from "@prisma/client";
 import useDirectNotificationQuery from "@/hooks/use-direct-notification-query";
 import { SelectScrollable } from "@/components/ui/ScrollableSelect";
@@ -41,7 +39,7 @@ const ServerNotifSheet = ({
 }) => {
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: sub(new Date(), { days: 10 }),
-    to: new Date(),
+    to: add(new Date(), { hours: 1 }),
   });
   const [selectedFilters, setSelectedFilters] = useState({
     memberId: undefined,
@@ -99,62 +97,64 @@ const ServerNotifSheet = ({
             Track all your notifications from channels and direct messages.
           </SheetDescription>
         </SheetHeader>
-        <div className="grid grid-cols-1 gap-5 w-full max-w-full">
-          <DatePickerWithRange date={date} setDate={setDate} />
-          <SelectScrollable
-            placeholder="Filter Channels"
-            items={channels.map((c) => ({
-              id: c.id,
-              label: c.name,
-              value: c.id,
-              icon: iconMapRaw[c.type],
-            }))}
-            value={selectedFilters.channelId}
-            key={selectedFilters.channelId}
-            onChange={(val) =>
-              setSelectedFilters({ ...selectedFilters, channelId: val })
-            }
-          />
-          <SelectScrollable
-            placeholder="Filter Members"
-            value={selectedFilters.memberId}
-            key={selectedFilters.memberId}
-            items={members.map((member) => ({
-              id: member.id,
-              label: member.profile.name,
-              value: member.id,
-              imageUrl: member.profile.imageUrl,
-              role: member.role,
-            }))}
-            onChange={(val) =>
-              setSelectedFilters({ ...selectedFilters, memberId: val })
-            }
-          />
-          <div className="w-full flex flex-wrap items-start justify-start gap-5">
-            <CustomTooltip align="center" label="Reset Filters" side="bottom">
-              <Button
-                onClick={() => onResetFilters()}
-                size={"icon"}
-                variant={"destructive"}
+        <ScrollArea className="w-full max-w-full h-fit">
+          <div className="flex flex-col items-start justify-start gap-5 w-full max-w-full">
+            <DatePickerWithRange date={date} setDate={setDate} />
+            <SelectScrollable
+              placeholder="Filter Channels"
+              items={channels.map((c) => ({
+                id: c.id,
+                label: c.name,
+                value: c.id,
+                icon: iconMapRaw[c.type],
+              }))}
+              value={selectedFilters.channelId}
+              key={selectedFilters.channelId}
+              onChange={(val) =>
+                setSelectedFilters({ ...selectedFilters, channelId: val })
+              }
+            />
+            <SelectScrollable
+              placeholder="Filter Members"
+              value={selectedFilters.memberId}
+              key={selectedFilters.memberId}
+              items={members.map((member) => ({
+                id: member.id,
+                label: member.profile.name,
+                value: member.id,
+                imageUrl: member.profile.imageUrl,
+                role: member.role,
+              }))}
+              onChange={(val) =>
+                setSelectedFilters({ ...selectedFilters, memberId: val })
+              }
+            />
+            <div className="w-full flex flex-wrap items-start justify-start gap-5">
+              <CustomTooltip align="center" label="Reset Filters" side="bottom">
+                <Button
+                  onClick={() => onResetFilters()}
+                  size={"icon"}
+                  variant={"destructive"}
+                >
+                  <ResetIcon className="w-4 h-4" />
+                </Button>
+              </CustomTooltip>
+              <CustomTooltip
+                align="center"
+                side="bottom"
+                label={isLoading ? "Pending..." : "Search completed!"}
               >
-                <ResetIcon className="w-4 h-4" />
-              </Button>
-            </CustomTooltip>
-            <CustomTooltip
-              align="center"
-              side="bottom"
-              label={isLoading ? "Pending..." : "Search completed!"}
-            >
-              <Button variant={"secondary"} size={"icon"}>
-                {isLoading ? (
-                  <SpinnerIcon className="animate-spin" />
-                ) : (
-                  <Check className="w-4 h-4 text-green-500" />
-                )}
-              </Button>
-            </CustomTooltip>
+                <Button variant={"secondary"} size={"icon"}>
+                  {isLoading ? (
+                    <SpinnerIcon className="animate-spin" />
+                  ) : (
+                    <Check className="w-4 h-4 text-green-500" />
+                  )}
+                </Button>
+              </CustomTooltip>
+            </div>
           </div>
-          <Separator className="h-[2px] w-full bg-zinc-300 dark:bg-zinc-700 rounded-md  mx-auto" />
+          <Separator className="my-5  h-[2px] w-full bg-zinc-300 dark:bg-zinc-700 rounded-md  mx-auto" />
           <MutiTabs
             key={{
               notifications_status,
@@ -181,7 +181,7 @@ const ServerNotifSheet = ({
               {
                 value: "channels",
                 children: (
-                  <ScrollArea className="h-96 w-full max-w-full rounded-md flex flex-col items-start justify-start gap-0 p-1">
+                  <ScrollArea className="h-64 w-full max-w-full rounded-md flex flex-col items-start justify-start gap-0 p-1">
                     {notifications.length > 0 ? (
                       notifications.map((n) => (
                         <NotificationCard
@@ -203,7 +203,7 @@ const ServerNotifSheet = ({
               {
                 value: "conversations",
                 children: (
-                  <ScrollArea className="h-96 w-full rounded-md flex flex-col items-start justify-start gap-0">
+                  <ScrollArea className="h-64 w-full rounded-md flex flex-col items-start justify-start gap-0">
                     {directNotifications.length > 0 ? (
                       directNotifications.map((n) => (
                         <DirectNotificationCard
@@ -224,7 +224,7 @@ const ServerNotifSheet = ({
               },
             ]}
           />
-        </div>
+        </ScrollArea>
       </SheetContent>
     </Sheet>
   );

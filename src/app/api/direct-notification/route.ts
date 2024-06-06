@@ -14,6 +14,8 @@ export async function GET(req: Request) {
     const memberId = searchParams.get("memberId");
     const serverId = searchParams.get("serverId");
     const limit = searchParams.get("limit");
+    const startDate = searchParams.get("startDate");
+    const endDate = searchParams.get("endDate");
     const NOTIFICATIONS_BATCH = !!limit ? +limit : undefined;
 
     if (!profile) {
@@ -46,6 +48,15 @@ export async function GET(req: Request) {
       });
       where.conversationId = targetConversation?.id;
     }
+
+    if (!!startDate && !!endDate) {
+      where.createdAt = { gte: new Date(startDate), lte: new Date(endDate) };
+    } else if (!!startDate) {
+      where.createdAt = { gte: new Date(startDate) };
+    } else if (!!endDate) {
+      where.createdAt = { lte: new Date(endDate) };
+    }
+
     if (!!cursor && !!NOTIFICATIONS_BATCH) {
       notifications = await db.directNotification.findMany({
         where,

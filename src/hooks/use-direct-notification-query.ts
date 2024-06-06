@@ -31,6 +31,8 @@ const useDirectNotificationQuery = (params?: props) => {
           memberId: params?.memberId,
           serverId: params?.serverId,
           conversationId: params?.conversationId,
+          startDate: params?.startDate?.toISOString(),
+          endDate: params?.endDate?.toISOString(),
         },
       },
       { skipNull: true }
@@ -53,6 +55,9 @@ const useDirectNotificationQuery = (params?: props) => {
       params?.memberId,
       params?.serverId,
       params?.limit,
+      params?.startDate,
+      params?.endDate,
+      params?.conversationId,
     ],
     queryFn: (params) => fetchNotifications({ pageParam: params.pageParam }),
     getNextPageParam: (lastPage: { nextCursor: null | string }) =>

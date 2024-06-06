@@ -36,6 +36,7 @@
     "cmdk": "^0.2.0",
     "date-fns": "^3.6.0",
     "emoji-mart": "^5.5.2",
+    "howler": "^2.2.4",
     "livekit-server-sdk": "^2.1.2",
     "lodash": "^4.17.21",
     "lucide-react": "^0.371.0",
@@ -58,6 +59,7 @@
     "zustand": "^4.5.2"
   },
   "devDependencies": {
+    "@types/howler": "^2.2.11",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

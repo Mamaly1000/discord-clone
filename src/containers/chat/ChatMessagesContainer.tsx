@@ -10,7 +10,7 @@ import { format } from "date-fns";
 import { useChatSocket } from "@/hooks/use-chat-socket";
 import { useChatScroll } from "@/hooks/use-chat-scroll";
 import useNotificationQuery from "@/hooks/use-notification-query";
-import useDirectNotificationQuery from "@/hooks/use-direct-notification-query";
+import useDirectNotificationQuery from "@/hooks/use-direct-notification-query"; 
 
 interface props {
   name: string;
